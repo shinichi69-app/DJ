@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEON DJ MIXER</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#07080d;color:#eee;font-family:Arial,sans-serif;overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;background:radial-gradient(circle at 50% 0,#14203a 0,transparent 45%),linear-gradient(135deg,#07080d,#0b0e15);z-index:-2}
+.app{max-width:1450px;margin:auto;padding:18px}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
+.logo{font-size:25px;font-weight:900;letter-spacing:4px;color:#fff}.logo b{color:#20d9ff}
+.status{font-size:12px;color:#72ffb0;border:1px solid #194d39;padding:7px 12px;border-radius:20px;background:#0b1713}
+.mixer{display:grid;grid-template-columns:1fr 330px 1fr;gap:14px}
+.deck,.center{background:rgba(15,18,27,.92);border:1px solid #252b39;border-radius:18px;box-shadow:0 12px 35px #0008}
+.deck{padding:15px}.deck h2{margin:0 0 10px;font-size:15px;letter-spacing:2px}
+.deckA h2{color:#20d9ff}.deckB h2{color:#ff4da6}
+.file{width:100%;font-size:12px;margin-bottom:12px}
+input[type=file]{display:none}
+.load{display:block;text-align:center;padding:11px;border-radius:10px;background:#171d29;border:1px solid #30394a;cursor:pointer}
+.track{height:38px;display:flex;align-items:center;padding:0 12px;background:#0a0d13;border-radius:9px;margin-bottom:12px;color:#aaa;white-space:nowrap;overflow:hidden}
+.wave{height:105px;border-radius:12px;background:#05070b;border:1px solid #222a38;position:relative;overflow:hidden}
+canvas{width:100%;height:100%}
+.time{display:flex;justify-content:space-between;font:12px monospace;color:#8d98aa;margin:7px 2px}
+.controls{display:flex;gap:8px;align-items:center;margin:10px 0}
+button{border:0;color:#fff;background:#202838;border-radius:10px;padding:11px 15px;font-weight:bold;cursor:pointer}
+button:hover{filter:brightness(1.25)}
+.play{flex:1;font-size:15px;background:#13bce0}.deckB .play{background:#e9348e}
+.knobrow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.ctrl{background:#0b0e15;border:1px solid #222938;border-radius:10px;padding:8px}
+.ctrl label{display:block;font-size:10px;color:#7e899b;margin-bottom:4px}
+input[type=range]{width:100%;accent-color:#20d9ff}
+.deckB input[type=range]{accent-color:#ff4da6}
+.center{padding:15px;display:flex;flex-direction:column;gap:12px}
+.center h2{text-align:center;font-size:13px;letter-spacing:3px;color:#8894a8;margin:2px}
+.jog{height:185px;width:185px;margin:auto;border-radius:50%;background:radial-gradient(circle,#151a24 0 22%,#080a0e 23% 31%,#242b38 32% 34%,#0b0d13 35% 67%,#303846 68% 70%,#090b10 71%);border:8px solid #171c27;box-shadow:0 0 35px #20d9ff18,inset 0 0 30px #000;position:relative}
+.jog:after{content:"";position:absolute;width:12px;height:12px;border-radius:50%;background:#20d9ff;left:50%;top:50%;transform:translate(-50%,-50%);box-shadow:0 0 15px #20d9ff}
+.master{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.master .ctrl{padding:10px}
+.cross{padding:12px;background:#090c12;border-radius:12px;border:1px solid #202735}
+.cross label{font-size:11px;color:#8994a5;display:block;text-align:center;margin-bottom:5px}
+.cross input{accent-color:#fff}
+.meters{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.meter{height:8px;background:#151a22;border-radius:8px;overflow:hidden}.meter i{display:block;height:100%;width:45%;background:linear-gradient(90deg,#20d9ff,#72ff9b);box-shadow:0 0 10px #20d9ff}
+.hot{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.hot button{font-size:11px;padding:9px 4px}
+.footer{text-align:center;color:#4f5969;font-size:10px;margin-top:12px}
+@media(max-width:1050px){.mixer{grid-template-columns:1fr}.center{order:-1}.jog{width:150px;height:150px}}
+
+.dashboard{margin-bottom:14px;background:rgba(15,18,27,.94);border:1px solid #252b39;border-radius:18px;padding:15px;box-shadow:0 12px 35px #0008}
+.dashhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.dashhead h2{margin:0;font-size:14px;letter-spacing:3px}.dashhead span{font-size:10px;color:#667286}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.stat{background:#0a0d13;border:1px solid #222938;border-radius:11px;padding:10px}.stat small{display:block;color:#6e798c;font-size:9px}.stat strong{font-size:20px;display:block;margin-top:3px}
+.nav{display:flex;gap:8px;margin-bottom:12px}.nav button{flex:1;background:#101521;border:1px solid #283142}.nav button.active{background:#182536;border-color:#20d9ff;color:#20d9ff}
+.page{display:none}.page.active{display:block}
+.fxpanel{margin-top:12px;padding:10px;background:#090c12;border:1px solid #222938;border-radius:12px}.fxpanel h3{font-size:10px;color:#8894a8;letter-spacing:2px;margin:0 0 8px}.fxgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.fxgrid button{padding:9px 4px;font-size:10px}.fxgrid button.on{background:#20d9ff;color:#061018;box-shadow:0 0 12px #20d9ff55}.deckB .fxgrid button.on{background:#ff4da6;color:#180611}
+.log{margin-top:10px;height:62px;overflow:auto;background:#05070b;border-radius:9px;padding:8px;font:10px monospace;color:#6e829b}
+@media(max-width:700px){.stats{grid-template-columns:repeat(2,1fr)}.fxgrid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <div class="logo">NEON <b>DJ</b> MIXER</div>
+    <div class="status" id="status">● READY</div>
+  </div>
+
+  
+<div class="nav">
+  <button class="active" data-page="mixerPage">🎚 MIXER</button>
+  <button data-page="dashPage">📊 DASHBOARD</button>
+</div>
+<div id="dashPage" class="page">
+  <section class="dashboard">
+    <div class="dashhead"><h2>LIVE DASHBOARD</h2><span id="dashClock">00:00:00</span></div>
+    <div class="stats">
+      <div class="stat"><small>DECK A</small><strong id="statA">READY</strong></div>
+      <div class="stat"><small>DECK B</small><strong id="statB">READY</strong></div>
+      <div class="stat"><small>PLAYING</small><strong id="statPlaying">0</strong></div>
+      <div class="stat"><small>CROSSFADER</small><strong id="statCross">CENTER</strong></div>
+      <div class="stat"><small>MASTER</small><strong id="statMaster">85%</strong></div>
+    </div>
+    <div class="log" id="eventLog">[SYSTEM] NEON DJ MIXER READY</div>
+  </section>
+</div>
+<div id="mixerPage" class="page active">
+<div class="mixer">
+    <section class="deck deckA">
+      <h2>DECK A · BLUE</h2>
+      <label class="load">โหลดเพลง A<input id="fileA" type="file" accept="audio/*"></label>
+      <div class="track" id="nameA">ยังไม่ได้โหลดเพลง</div>
+      <div class="wave"><canvas id="waveA"></canvas></div>
+      <div class="time"><span id="curA">00:00</span><span id="durA">00:00</span></div>
+      <input id="seekA" type="range" min="0" max="100" value="0">
+      <div class="controls">
+        <button id="cueA">CUE</button><button class="play" id="playA">▶ PLAY</button>
+        <button id="stopA">■</button>
+      </div>
+      <div class="knobrow">
+        <div class="ctrl"><label>LOW</label><input id="lowA" type="range" min="-12" max="12" value="0"></div>
+        <div class="ctrl"><label>MID</label><input id="midA" type="range" min="-12" max="12" value="0"></div>
+        <div class="ctrl"><label>HIGH</label><input id="highA" type="range" min="-12" max="12" value="0"></div>
+      </div>
+      <div class="ctrl" style="margin-top:8px"><label>GAIN</label><input id="gainA" type="range" min="0" max="1.5" step=".01" value="1"></div>
+      <div class="ctrl" style="margin-top:8px"><label>PITCH / SPEED</label><input id="pitchA" type="range" min=".7" max="1.3" step=".01" value="1"></div>
+<div class="fxpanel"><h3>EFFECTS · DECK A</h3><div class="fxgrid">
+<button data-fx="echo" data-deck="A">ECHO</button><button data-fx="reverb" data-deck="A">REVERB</button>
+<button data-fx="flanger" data-deck="A">FLANGER</button><button data-fx="filter" data-deck="A">FILTER</button>
+<button data-fx="delay" data-deck="A">DELAY</button><button data-fx="crush" data-deck="A">BIT CRUSH</button>
+<button data-fx="stutter" data-deck="A">STUTTER</button><button data-fx="reset" data-deck="A">FX RESET</button>
+</div></div>
+
+    </section>
+
+    <section class="center">
+      <h2>MASTER MIX</h2>
+      <div class="jog" id="jog"></div>
+      <div class="meters"><div class="meter"><i id="meterA"></i></div><div class="meter"><i id="meterB"></i></div></div>
+      <div class="master">
+        <div class="ctrl"><label>MASTER</label><input id="master" type="range" min="0" max="1" step=".01" value=".85"></div>
+        <div class="ctrl"><label>FILTER</label><input id="filter" type="range" min="0" max="100" value="100"></div>
+      </div>
+      <div class="cross">
+        <label>CROSSFADER — A ◀ MIX ▶ B</label>
+        <input id="cross" type="range" min="-1" max="1" step=".01" value="0">
+      </div>
+      <div class="hot">
+        <button data-cue="A">A CUE</button><button data-cue="B">B CUE</button>
+        <button id="duck">DUCK</button><button id="panic">MUTE</button>
+      </div>
+      <button id="masterPlay" style="background:#171e2b">▶ PLAY ACTIVE DECK</button>
+    </section>
+
+    <section class="deck deckB">
+      <h2>DECK B · PINK</h2>
+      <label class="load">โหลดเพลง B<input id="fileB" type="file" accept="audio/*"></label>
+      <div class="track" id="nameB">ยังไม่ได้โหลดเพลง</div>
+      <div class="wave"><canvas id="waveB"></canvas></div>
+      <div class="time"><span id="curB">00:00</span><span id="durB">00:00</span></div>
+      <input id="seekB" type="range" min="0" max="100" value="0">
+      <div class="controls">
+        <button id="cueB">CUE</button><button class="play" id="playB">▶ PLAY</button>
+        <button id="stopB">■</button>
+      </div>
+      <div class="knobrow">
+        <div class="ctrl"><label>LOW</label><input id="lowB" type="range" min="-12" max="12" value="0"></div>
+        <div class="ctrl"><label>MID</label><input id="midB" type="range" min="-12" max="12" value="0"></div>
+        <div class="ctrl"><label>HIGH</label><input id="highB" type="range" min="-12" max="12" value="0"></div>
+      </div>
+      <div class="ctrl" style="margin-top:8px"><label>GAIN</label><input id="gainB" type="range" min="0" max="1.5" step=".01" value="1"></div>
+      <div class="ctrl" style="margin-top:8px"><label>PITCH / SPEED</label><input id="pitchB" type="range" min=".7" max="1.3" step=".01" value="1"></div>
+<div class="fxpanel"><h3>EFFECTS · DECK B</h3><div class="fxgrid">
+<button data-fx="echo" data-deck="B">ECHO</button><button data-fx="reverb" data-deck="B">REVERB</button>
+<button data-fx="flanger" data-deck="B">FLANGER</button><button data-fx="filter" data-deck="B">FILTER</button>
+<button data-fx="delay" data-deck="B">DELAY</button><button data-fx="crush" data-deck="B">BIT CRUSH</button>
+<button data-fx="stutter" data-deck="B">STUTTER</button><button data-fx="reset" data-deck="B">FX RESET</button>
+</div></div>
+
+    </section>
+  </div>
+</div>
+  <div class="footer">NEON DJ MIXER · ทำงานในเบราว์เซอร์ · เพลงไม่ถูกอัปโหลดออกจากเครื่อง</div>
+</div>
+
+<script>
+const AC = window.AudioContext || window.webkitAudioContext;
+let audioCtx=null, masterGain=null, filterNode=null;
+const decks={A:{audio:null,source:null,gain:null,eq:[],loaded:false,fx:{}},B:{audio:null,source:null,gain:null,eq:[],loaded:false,fx:{}}}; let mixStart=Date.now();
+
+function initAudio(){
+  if(audioCtx)return;
+  audioCtx=new AC();
+  masterGain=audioCtx.createGain();
+  filterNode=audioCtx.createBiquadFilter();
+  filterNode.type='lowpass'; filterNode.frequency.value=20000;
+  masterGain.connect(filterNode).connect(audioCtx.destination);
+}
+function fmt(s){if(!isFinite(s))return"00:00";let m=Math.floor(s/60),x=Math.floor(s%60);return String(m).padStart(2,'0')+':'+String(x).padStart(2,'0')}
+function connectDeck(k){
+  const d=decks[k]; if(!d.audio)return;
+  if(d.source)try{d.source.disconnect()}catch(e){}
+  d.source=audioCtx.createMediaElementSource(d.audio);
+  d.eq=[4000,1000,120].map((f,i)=>{let n=audioCtx.createBiquadFilter();n.type='peaking';n.frequency.value=f;n.Q.value=.8;n.gain.value=0;return n});
+  d.gain=audioCtx.createGain(); d.gain.gain.value=1;
+  d.source.connect(d.eq[0]).connect(d.eq[1]).connect(d.eq[2]).connect(d.gain).connect(masterGain);
+  d.audio.onloadedmetadata=()=>document.getElementById('dur'+k).textContent=fmt(d.audio.duration);
+  d.audio.ontimeupdate=()=>{document.getElementById('cur'+k).textContent=fmt(d.audio.currentTime);document.getElementById('seek'+k).value=d.audio.duration?d.audio.currentTime/d.audio.duration*100:0};
+}
+
+function makeFX(k){
+  const d=decks[k]; if(!d.audio)return;
+  d.fx.echo=audioCtx.createDelay(2); d.fx.echo.delayTime.value=.28;
+  d.fx.reverb=audioCtx.createConvolver();
+  const ir=audioCtx.createBuffer(2,audioCtx.sampleRate*1.4,audioCtx.sampleRate);
+  for(let ch=0;ch<2;ch++){let data=ir.getChannelData(ch);for(let i=0;i<data.length;i++)data[i]=(Math.random()*2-1)*Math.pow(1-i/data.length,2.4)}
+  d.fx.reverb.buffer=ir;
+  d.fx.flanger=audioCtx.createDelay(); d.fx.flanger.delayTime.value=.012;
+  d.fx.delay=audioCtx.createDelay(2); d.fx.delay.delayTime.value=.42;
+  d.fx.crush=audioCtx.createWaveShaper(); d.fx.crush.curve=new Float32Array([-1,-.65,-.25,.25,.65,1]); d.fx.crush.oversample='2x';
+  Object.values(d.fx).forEach(n=>{if(n.connect)n.connect(d.gain)});
+}
+function toggleFX(k,name,btn){
+  const d=decks[k]; if(!d.gain||name==='reset')return;
+  if(!d.fx[name])return;
+  if(btn.classList.contains('on')){try{d.fx[name].disconnect()}catch(e){};btn.classList.remove('on');return}
+  d.fx[name].connect(d.gain); btn.classList.add('on');
+  logEvent(k+' FX '+name.toUpperCase()+' ON');
+}
+function logEvent(t){const l=document.getElementById('eventLog');if(l){l.innerHTML+='\\n['+new Date().toLocaleTimeString()+'] '+t;l.scrollTop=l.scrollHeight}}
+function load(k,file){
+  initAudio();
+  if(decks[k].audio)URL.revokeObjectURL(decks[k].audio.src);
+  const a=new Audio();a.src=URL.createObjectURL(file);a.preload='auto';a.crossOrigin='anonymous';
+  decks[k].audio=a;decks[k].loaded=true;connectDeck(k);makeFX(k);
+  document.getElementById('name'+k).textContent=file.name;
+  document.getElementById('status').textContent='● '+k+' LOADED';
+  drawWave(k);
+}
+['A','B'].forEach(k=>{
+  document.getElementById('file'+k).onchange=e=>e.target.files[0]&&load(k,e.target.files[0]);
+  document.getElementById('play'+k).onclick=async()=>{initAudio();await audioCtx.resume();let a=decks[k].audio;if(!a)return;if(a.paused)a.play();else a.pause()};
+  document.getElementById('stop'+k).onclick=()=>{let a=decks[k].audio;if(a){a.pause();a.currentTime=0}};
+  document.getElementById('cue'+k).onclick=()=>{let a=decks[k].audio;if(a){a.currentTime=0;a.play()}};
+  document.getElementById('seek'+k).oninput=e=>{let a=decks[k].audio;if(a&&a.duration)a.currentTime=e.target.value/100*a.duration};
+  ['low','mid','high'].forEach((x,i)=>document.getElementById(x+k).oninput=e=>{let d=decks[k];if(d.eq[i])d.eq[i].gain.value=e.target.value});
+  document.getElementById('gain'+k).oninput=e=>{if(decks[k].gain)decks[k].gain.gain.value=e.target.value};
+  document.getElementById('pitch'+k).oninput=e=>{if(decks[k].audio)decks[k].audio.playbackRate=e.target.value};
+});
+document.getElementById('cross').oninput=e=>{
+  let x=+e.target.value, a=Math.cos((x+1)*Math.PI/4), b=Math.cos((1-x)*Math.PI/4);
+  if(decks.A.gain)decks.A.gain.gain.value=a*(+document.getElementById('gainA').value);
+  if(decks.B.gain)decks.B.gain.gain.value=b*(+document.getElementById('gainB').value);
+};
+document.getElementById('master').oninput=e=>{if(masterGain)masterGain.gain.value=e.target.value};
+document.getElementById('filter').oninput=e=>{if(filterNode)filterNode.frequency.value=300+e.target.value/100*19700};
+document.getElementById('masterPlay').onclick=async()=>{initAudio();await audioCtx.resume();let k=decks.A.loaded?'A':(decks.B.loaded?'B':null);if(k)decks[k].audio.paused?decks[k].audio.play():decks[k].audio.pause()};
+document.getElementById('duck').onclick=()=>{if(masterGain){masterGain.gain.cancelScheduledValues(audioCtx.currentTime);masterGain.gain.setValueAtTime(masterGain.gain.value,audioCtx.currentTime);masterGain.gain.linearRampToValueAtTime(.25,audioCtx.currentTime+.15);setTimeout(()=>masterGain.gain.linearRampToValueAtTime(+document.getElementById('master').value,audioCtx.currentTime+.3),900)}};
+document.getElementById('panic').onclick=()=>{if(masterGain)masterGain.gain.value=masterGain.gain.value?0:+document.getElementById('master').value};
+document.querySelectorAll('[data-cue]').forEach(b=>b.onclick=()=>{let k=b.dataset.cue;if(decks[k].audio){decks[k].audio.currentTime=0;decks[k].audio.play()}});
+function drawWave(k){
+  const c=document.getElementById('wave'+k),ctx=c.getContext('2d');c.width=c.clientWidth*2;c.height=c.clientHeight*2;
+  ctx.clearRect(0,0,c.width,c.height);ctx.lineWidth=2;ctx.strokeStyle=k==='A'?'#20d9ff':'#ff4da6';ctx.beginPath();
+  for(let x=0;x<c.width;x+=5){let y=c.height/2+Math.sin(x*.08)*c.height*.16*Math.random();ctx.lineTo(x,y)}ctx.stroke();
+}
+window.onresize=()=>['A','B'].forEach(drawWave);
+['A','B'].forEach(drawWave);
+
+document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.getElementById(b.dataset.page).classList.add('active');
+});
+document.querySelectorAll('[data-fx]').forEach(b=>b.onclick=()=>{
+  const k=b.dataset.deck,n=b.dataset.fx;
+  if(n==='reset'){document.querySelectorAll('[data-deck="'+k+'"]').forEach(x=>x.classList.remove('on'));return}
+  toggleFX(k,n,b);
+});
+function dashboardTick(){
+  const a=decks.A.audio,b=decks.B.audio;
+  document.getElementById('statA').textContent=a?(a.paused?'PAUSED':'PLAYING'):'READY';
+  document.getElementById('statB').textContent=b?(b.paused?'PAUSED':'PLAYING'):'READY';
+  document.getElementById('statPlaying').textContent=[a,b].filter(x=>x&&!x.paused).length;
+  const x=+document.getElementById('cross').value;
+  document.getElementById('statCross').textContent=x<-.1?'A '+Math.round(-x*100)+'%':x>.1?'B '+Math.round(x*100)+'%':'CENTER';
+  document.getElementById('statMaster').textContent=Math.round(+document.getElementById('master').value*100)+'%';
+  document.getElementById('dashClock').textContent=fmt((Date.now()-mixStart)/1000);
+}
+setInterval(dashboardTick,250);
+const oldLoad=load;
+load=function(k,file){oldLoad(k,file);logEvent('DECK '+k+' LOADED: '+file.name)};
+document.getElementById('cross').addEventListener('input',()=>logEvent('CROSSFADER '+Math.round(+document.getElementById('cross').value*100)));
+</script>
+</body>
+</html>
