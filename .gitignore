@@ -1,0 +1,247 @@
+﻿# ============================================
+# EMPLOYEE DIRECTORY - GIT IGNORE FILE
+# ============================================
+
+# ----------------------
+# DEPENDENCIES
+# ----------------------
+# Node.js dependencies
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# ----------------------
+# ENVIRONMENT FILES
+# ----------------------
+# Environment variables (sensitive data)
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+.env.test
+
+# ----------------------
+# LOGS
+# ----------------------
+# Log files
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ----------------------
+# BUILD OUTPUTS
+# ----------------------
+# Build directories
+dist/
+build/
+out/
+.next/
+.nuxt/
+.vuepress/dist/
+
+# Compiled files
+*.min.js
+*.min.css
+*.map
+
+# ----------------------
+# DATABASE
+# ----------------------
+# Database files
+*.sqlite
+*.sqlite3
+*.db
+*.mdb
+*.accdb
+*.sql.bak
+
+# Database dumps (except schema)
+*.sql
+!database.sql
+!schema.sql
+
+# ----------------------
+# IDE / EDITOR
+# ----------------------
+# Visual Studio Code
+.vscode/
+*.code-workspace
+.vscode-test/
+
+# IntelliJ IDEA / WebStorm / PHPStorm
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Atom
+.atom/
+
+# Vim
+*.swp
+*.swo
+*~
+*.un~
+
+# Emacs
+*#
+*.elc
+
+# ----------------------
+# OPERATING SYSTEM
+# ----------------------
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*.pid
+*.pid.lock
+*.socket
+
+# ----------------------
+# TESTING
+# ----------------------
+# Coverage directories
+coverage/
+.nyc_output/
+
+# Test outputs
+*.test.js
+*.spec.js
+*.test.ts
+*.spec.ts
+
+# ----------------------
+# TEMPORARY FILES
+# ----------------------
+# Temporary uploads
+tmp/
+temp/
+uploads/
+*.tmp
+*.temp
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# ----------------------
+# CONFIGURATION FILES
+# ----------------------
+# Local configuration overrides
+*.local.json
+*.local.yml
+*.local.yaml
+*.local.js
+*.local.ts
+
+# ----------------------
+# SECURITY
+# ----------------------
+# SSL certificates (except examples)
+*.pem
+*.key
+*.crt
+*.csr
+*.p12
+!*.example.*
+!*.pem.example
+
+# Password files
+*.secret
+*.password
+
+# ----------------------
+# MISC
+# ----------------------
+# Docker
+docker-compose.override.yml
+.dockerignore
+
+# Terraform
+*.tfstate
+*.tfstate.*
+
+# Kubernetes
+*.kubeconfig
+
+# Packagist
+composer.phar
+vendor/
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.Python
+
+# Ruby
+Gemfile.lock
+.bundle/
+
+# Java
+*.class
+*.jar
+
+# ----------------------
+# PROJECT SPECIFIC
+# ----------------------
+# Uploaded profile images
+public/uploads/
+storage/app/public/
+
+# Generated documentation
+docs/_build/
+docs/api/
+
+# IDE specific project files
+.project
+.classpath
+.settings/
+
+# ESLint / Prettier
+.eslintcache
+.prettiercache
+
+# TypeScript
+*.tsbuildinfo
+
+# ----------------------
+# MISCELLANEOUS
+# ----------------------
+# MacOS metadata files
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows metadata
+desktop.ini
+$RECYCLE.BIN/
+
+# Linux tmp files
+*.pid
+*.socket
