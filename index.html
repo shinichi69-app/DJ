@@ -1,11 +1,10 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>แนะนำพนักงานให้ทีม - Employee Directory</title>
     
-    <!-- CSS ทั้งหมดรวมไว้ที่นี่ -->
     <style>
         /* ========== CSS Reset & Base ========== */
         * {
@@ -19,6 +18,7 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
+            overflow-x: hidden; /* ป้องกันการเลื่อนแนวนอน */
         }
 
         .container {
@@ -31,6 +31,7 @@
             backdrop-filter: blur(10px);
         }
 
+        /* ========== Header ========== */
         header {
             display: flex;
             justify-content: space-between;
@@ -38,6 +39,8 @@
             margin-bottom: 30px;
             padding-bottom: 20px;
             border-bottom: 2px solid #f0f0f0;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .header-content h1 {
@@ -57,6 +60,7 @@
             margin-top: 5px;
         }
 
+        /* ========== Buttons ========== */
         .btn {
             padding: 12px 24px;
             border: none;
@@ -81,6 +85,16 @@
             box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
         }
 
+        .btn-success {
+            background: linear-gradient(135deg, #00b894 0%, #00a86b 100%);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 184, 148, 0.4);
+        }
+
         .btn-danger {
             background: #e74c3c;
             color: white;
@@ -103,6 +117,7 @@
         .btn-block {
             width: 100%;
             justify-content: center;
+            padding: 14px;
         }
 
         /* ========== Search and Filter ========== */
@@ -298,6 +313,8 @@
             background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(5px);
             animation: fadeIn 0.3s;
+            overflow-y: auto; /* ป้องกันเนื้อหาล้น */
+            padding: 20px;
         }
 
         @keyframes fadeIn {
@@ -307,13 +324,15 @@
 
         .modal-content {
             background: white;
-            margin: 50px auto;
+            margin: 20px auto;
             padding: 0;
-            width: 90%;
-            max-width: 500px;
+            width: 100%;
+            max-width: 550px;
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             animation: slideDown 0.3s;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         @keyframes slideDown {
@@ -327,58 +346,92 @@
             }
         }
 
+        /* ========== Modal Header ========== */
         .modal-header {
-            padding: 20px 25px;
+            padding: 25px 30px;
             border-bottom: 2px solid #f0f0f0;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px 20px 0 0;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
         .modal-header h2 {
-            font-size: 1.3rem;
-            color: #2c3e50;
+            font-size: 1.4rem;
+            color: white;
+            margin: 0;
         }
 
-        .close,
-        .close-delete {
+        .modal-header h2 i {
+            margin-right: 10px;
+        }
+
+        .close {
             font-size: 2rem;
             cursor: pointer;
-            color: #999;
-            transition: color 0.3s;
+            color: white;
+            transition: transform 0.3s;
+            line-height: 1;
         }
 
-        .close:hover,
-        .close-delete:hover {
-            color: #333;
+        .close:hover {
+            transform: rotate(90deg);
         }
 
-        .modal-content form {
-            padding: 25px;
+        /* ========== Modal Body (Form) ========== */
+        .modal-body {
+            padding: 30px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
         }
 
         .form-group {
             margin-bottom: 20px;
         }
 
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
         .form-group label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             font-weight: 600;
-            color: #333;
+            color: #2c3e50;
             font-size: 0.95rem;
+        }
+
+        .form-group label .required {
+            color: #e74c3c;
+            margin-left: 4px;
+        }
+
+        .form-group label i {
+            color: #667eea;
+            margin-right: 8px;
+            width: 18px;
         }
 
         .form-group input,
         .form-group select,
         .form-group textarea {
             width: 100%;
-            padding: 10px 15px;
+            padding: 12px 15px;
             border: 2px solid #e0e0e0;
             border-radius: 10px;
             font-family: 'Prompt', sans-serif;
             font-size: 0.95rem;
-            transition: border-color 0.3s;
+            transition: all 0.3s;
+            background: #fafafa;
         }
 
         .form-group input:focus,
@@ -386,6 +439,14 @@
         .form-group textarea:focus {
             outline: none;
             border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group input:hover,
+        .form-group select:hover,
+        .form-group textarea:hover {
+            border-color: #a8b5f0;
         }
 
         .form-group textarea {
@@ -393,20 +454,65 @@
             min-height: 80px;
         }
 
+        .form-group .input-icon {
+            position: relative;
+        }
+
+        .form-group .input-icon i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        .form-group .input-icon input {
+            padding-left: 45px;
+        }
+
+        /* ========== Modal Footer ========== */
+        .modal-footer {
+            padding: 20px 30px 30px;
+            border-top: 2px solid #f0f0f0;
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            background: #fafafa;
+            border-radius: 0 0 20px 20px;
+        }
+
+        .modal-footer .btn {
+            padding: 12px 30px;
+            min-width: 120px;
+            justify-content: center;
+        }
+
         /* ========== Delete Modal ========== */
         .delete-modal {
-            max-width: 400px;
+            max-width: 420px;
+        }
+
+        .delete-modal .modal-header {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
         }
 
         .delete-modal p {
-            padding: 20px 25px;
+            padding: 30px;
             font-size: 1.1rem;
-            color: #333;
+            color: #2c3e50;
             text-align: center;
+            margin: 0;
+        }
+
+        .delete-modal p i {
+            font-size: 3rem;
+            color: #e74c3c;
+            display: block;
+            margin-bottom: 15px;
         }
 
         .delete-actions {
-            padding: 0 25px 25px;
+            padding: 0 30px 30px;
             display: flex;
             gap: 15px;
             justify-content: center;
@@ -415,27 +521,65 @@
         .delete-actions .btn {
             flex: 1;
             justify-content: center;
+            padding: 12px;
         }
 
         /* ========== Empty State ========== */
         .empty-state {
             grid-column: 1/-1;
             text-align: center;
-            padding: 50px;
+            padding: 60px 20px;
         }
 
         .empty-state i {
-            font-size: 3rem;
-            color: #ccc;
+            font-size: 4rem;
+            color: #dce0e6;
         }
 
         .empty-state h3 {
-            color: #666;
-            margin-top: 15px;
+            color: #2c3e50;
+            margin-top: 20px;
+            font-size: 1.3rem;
         }
 
         .empty-state p {
             color: #999;
+            margin-top: 10px;
+        }
+
+        /* ========== Toast Notification ========== */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 10px;
+            color: white;
+            font-family: 'Prompt', sans-serif;
+            font-weight: 600;
+            z-index: 2000;
+            animation: slideIn 0.5s;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+        }
+
+        .toast.success {
+            background: linear-gradient(135deg, #00b894, #00a86b);
+        }
+
+        .toast.error {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
 
         /* ========== Responsive ========== */
@@ -470,14 +614,96 @@
                 grid-template-columns: 1fr;
             }
             
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+
             .modal-content {
-                margin: 20px auto;
-                width: 95%;
+                margin: 10px auto;
+                width: 100%;
+                max-height: 95vh;
+            }
+
+            .modal-header {
+                padding: 20px;
+            }
+
+            .modal-header h2 {
+                font-size: 1.1rem;
+            }
+
+            .modal-body {
+                padding: 20px;
+            }
+
+            .modal-footer {
+                flex-direction: column;
+                padding: 15px 20px 20px;
+            }
+
+            .modal-footer .btn {
+                width: 100%;
+            }
+
+            .toast {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+                font-size: 0.9rem;
+                padding: 12px 18px;
             }
         }
 
-        /* ========== Font Awesome CDN fallback ========== */
-        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 12px;
+                border-radius: 15px;
+            }
+
+            .btn {
+                padding: 10px 18px;
+                font-size: 0.9rem;
+            }
+
+            .employee-card {
+                padding: 18px;
+            }
+
+            .modal-content {
+                border-radius: 15px;
+            }
+
+            .modal-header {
+                border-radius: 15px 15px 0 0;
+            }
+        }
+
+        /* ========== Scrollbar styling ========== */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #5a67d8;
+        }
+
+        /* ========== Font imports ========== */
         @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;700&display=swap');
     </style>
 </head>
@@ -500,12 +726,12 @@
                 <input type="text" id="searchInput" placeholder="ค้นหาชื่อหรือตำแหน่ง...">
             </div>
             <select id="departmentFilter" class="filter-select">
-                <option value="">ทั้งหมด</option>
-                <option value="พัฒนาเว็บ">พัฒนาเว็บ</option>
-                <option value="ดีไซน์">ดีไซน์</option>
-                <option value="การตลาด">การตลาด</option>
-                <option value="ฝ่ายขาย">ฝ่ายขาย</option>
-                <option value="บริหาร">บริหาร</option>
+                <option value="">📋 ทั้งหมด</option>
+                <option value="พัฒนาเว็บ">💻 พัฒนาเว็บ</option>
+                <option value="ดีไซน์">🎨 ดีไซน์</option>
+                <option value="การตลาด">📊 การตลาด</option>
+                <option value="ฝ่ายขาย">💰 ฝ่ายขาย</option>
+                <option value="บริหาร">👔 บริหาร</option>
             </select>
         </div>
 
@@ -521,81 +747,112 @@
         </div>
     </div>
 
-    <!-- Add/Edit Employee Modal -->
+    <!-- ========== ADD/EDIT EMPLOYEE MODAL ========== -->
     <div id="employeeModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="modalTitle"><i class="fas fa-user"></i> เพิ่มพนักงานใหม่</h2>
+                <h2 id="modalTitle"><i class="fas fa-user-plus"></i> เพิ่มพนักงานใหม่</h2>
                 <span class="close">&times;</span>
             </div>
+            
             <form id="employeeForm">
                 <input type="hidden" id="employeeId">
-                <div class="form-group">
-                    <label for="firstName">ชื่อ</label>
-                    <input type="text" id="firstName" required>
+                
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-user"></i> ชื่อ <span class="required">*</span></label>
+                            <input type="text" id="firstName" placeholder="เช่น สมชาย" required>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-user"></i> นามสกุล <span class="required">*</span></label>
+                            <input type="text" id="lastName" placeholder="เช่น ใจดี" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-briefcase"></i> ตำแหน่ง <span class="required">*</span></label>
+                            <input type="text" id="position" placeholder="เช่น นักพัฒนา Frontend" required>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-building"></i> แผนก <span class="required">*</span></label>
+                            <select id="department" required>
+                                <option value="">เลือกแผนก</option>
+                                <option value="พัฒนาเว็บ">💻 พัฒนาเว็บ</option>
+                                <option value="ดีไซน์">🎨 ดีไซน์</option>
+                                <option value="การตลาด">📊 การตลาด</option>
+                                <option value="ฝ่ายขาย">💰 ฝ่ายขาย</option>
+                                <option value="บริหาร">👔 บริหาร</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-envelope"></i> อีเมล <span class="required">*</span></label>
+                            <input type="email" id="email" placeholder="somchai@company.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-phone"></i> เบอร์โทร</label>
+                            <input type="tel" id="phone" placeholder="081-234-5678">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-image"></i> URL รูปภาพ</label>
+                        <input type="url" id="profileImage" placeholder="https://example.com/avatar.jpg">
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-file-alt"></i> ประวัติโดยย่อ</label>
+                        <textarea id="bio" rows="3" placeholder="แนะนำตัวสั้นๆ..."></textarea>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="lastName">นามสกุล</label>
-                    <input type="text" id="lastName" required>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancelBtn">
+                        <i class="fas fa-times"></i> ยกเลิก
+                    </button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save"></i> <span id="submitBtnText">บันทึก</span>
+                    </button>
                 </div>
-                <div class="form-group">
-                    <label for="position">ตำแหน่ง</label>
-                    <input type="text" id="position" required>
-                </div>
-                <div class="form-group">
-                    <label for="department">แผนก</label>
-                    <select id="department" required>
-                        <option value="">เลือกแผนก</option>
-                        <option value="พัฒนาเว็บ">พัฒนาเว็บ</option>
-                        <option value="ดีไซน์">ดีไซน์</option>
-                        <option value="การตลาด">การตลาด</option>
-                        <option value="ฝ่ายขาย">ฝ่ายขาย</option>
-                        <option value="บริหาร">บริหาร</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="email">อีเมล</label>
-                    <input type="email" id="email" required>
-                </div>
-                <div class="form-group">
-                    <label for="phone">เบอร์โทร</label>
-                    <input type="tel" id="phone">
-                </div>
-                <div class="form-group">
-                    <label for="bio">ประวัติโดยย่อ</label>
-                    <textarea id="bio" rows="3"></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="profileImage">URL รูปภาพ</label>
-                    <input type="url" id="profileImage" placeholder="https://example.com/image.jpg">
-                </div>
-                <button type="submit" class="btn btn-primary btn-block">
-                    <i class="fas fa-save"></i> บันทึก
-                </button>
             </form>
         </div>
     </div>
 
-    <!-- Delete Confirmation Modal -->
+    <!-- ========== DELETE CONFIRMATION MODAL ========== -->
     <div id="deleteModal" class="modal">
         <div class="modal-content delete-modal">
             <div class="modal-header">
-                <h2><i class="fas fa-exclamation-triangle" style="color: #e74c3c;"></i> ยืนยันการลบ</h2>
+                <h2><i class="fas fa-trash"></i> ยืนยันการลบ</h2>
                 <span class="close-delete">&times;</span>
             </div>
-            <p>คุณแน่ใจว่าต้องการลบพนักงานคนนี้?</p>
+            <p>
+                <i class="fas fa-exclamation-triangle"></i>
+                คุณแน่ใจว่าต้องการลบพนักงานคนนี้?<br>
+                <small style="color: #999; font-size: 0.85rem;">การดำเนินการนี้ไม่สามารถย้อนกลับได้</small>
+            </p>
             <div class="delete-actions">
-                <button id="confirmDelete" class="btn btn-danger">
-                    <i class="fas fa-trash"></i> ลบ
-                </button>
                 <button id="cancelDelete" class="btn btn-secondary">
                     <i class="fas fa-times"></i> ยกเลิก
+                </button>
+                <button id="confirmDelete" class="btn btn-danger">
+                    <i class="fas fa-trash"></i> ลบ
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- ========== JavaScript ทั้งหมดรวมไว้ที่นี่ ========== -->
+    <!-- ========== TOAST NOTIFICATION ========== -->
+    <div id="toast" class="toast" style="display: none;"></div>
+
+    <!-- ========== Font Awesome ========== -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <!-- ========== JAVASCRIPT ========== -->
     <script>
         // API URL
         const API_URL = '/api/employees';
@@ -621,6 +878,12 @@
         const phoneInput = document.getElementById('phone');
         const bioInput = document.getElementById('bio');
         const profileImageInput = document.getElementById('profileImage');
+        const submitBtnText = document.getElementById('submitBtnText');
+        const cancelBtn = document.getElementById('cancelBtn');
+
+        // Toast
+        const toast = document.getElementById('toast');
+        let toastTimeout;
 
         // Close buttons
         const closeModal = document.querySelector('.close');
@@ -630,9 +893,20 @@
 
         let currentDeleteId = null;
 
+        // ============== Toast Functions ==============
+        function showToast(message, type = 'success') {
+            toast.textContent = message;
+            toast.className = `toast ${type}`;
+            toast.style.display = 'block';
+            
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+
         // ============== API Functions ==============
 
-        // Fetch all employees
         async function fetchEmployees() {
             showLoading(true);
             try {
@@ -648,7 +922,6 @@
             }
         }
 
-        // Add new employee
         async function addEmployee(employeeData) {
             try {
                 const response = await fetch(API_URL, {
@@ -656,16 +929,17 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(employeeData)
                 });
-                if (!response.ok) throw new Error('Failed to add employee');
-                const newEmployee = await response.json();
-                return newEmployee;
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to add employee');
+                }
+                return await response.json();
             } catch (error) {
                 console.error('Error adding employee:', error);
                 throw error;
             }
         }
 
-        // Update employee
         async function updateEmployee(id, employeeData) {
             try {
                 const response = await fetch(`${API_URL}/${id}`, {
@@ -673,22 +947,26 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(employeeData)
                 });
-                if (!response.ok) throw new Error('Failed to update employee');
-                const updatedEmployee = await response.json();
-                return updatedEmployee;
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to update employee');
+                }
+                return await response.json();
             } catch (error) {
                 console.error('Error updating employee:', error);
                 throw error;
             }
         }
 
-        // Delete employee
         async function deleteEmployee(id) {
             try {
                 const response = await fetch(`${API_URL}/${id}`, {
                     method: 'DELETE'
                 });
-                if (!response.ok) throw new Error('Failed to delete employee');
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to delete employee');
+                }
                 return true;
             } catch (error) {
                 console.error('Error deleting employee:', error);
@@ -704,7 +982,7 @@
                     <div class="empty-state">
                         <i class="fas fa-users"></i>
                         <h3>ไม่พบข้อมูลพนักงาน</h3>
-                        <p>คลิก "เพิ่มพนักงาน" เพื่อเริ่มต้น</p>
+                        <p>คลิกปุ่ม "เพิ่มพนักงาน" เพื่อเริ่มต้น</p>
                     </div>
                 `;
                 return;
@@ -785,26 +1063,32 @@
                 phoneInput.value = employee.phone || '';
                 bioInput.value = employee.bio || '';
                 profileImageInput.value = employee.profileImage || '';
+                submitBtnText.textContent = 'อัพเดท';
             } else {
                 modalTitle.innerHTML = '<i class="fas fa-user-plus"></i> เพิ่มพนักงานใหม่';
                 employeeForm.reset();
                 employeeIdInput.value = '';
+                submitBtnText.textContent = 'บันทึก';
             }
             employeeModal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
         }
 
         function closeModalFn() {
             employeeModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
             employeeForm.reset();
         }
 
         function confirmDeleteEmployee(id) {
             currentDeleteId = id;
             deleteModal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
         }
 
         function closeDeleteModal() {
             deleteModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
             currentDeleteId = null;
         }
 
@@ -812,6 +1096,9 @@
 
         // Add employee button
         addEmployeeBtn.addEventListener('click', () => openModal());
+
+        // Cancel button in form
+        cancelBtn.addEventListener('click', closeModalFn);
 
         // Close modal buttons
         closeModal.addEventListener('click', closeModalFn);
@@ -833,7 +1120,7 @@
                 openModal(employee);
             } catch (error) {
                 console.error('Error fetching employee:', error);
-                alert('ไม่สามารถโหลดข้อมูลพนักงานได้');
+                showToast('ไม่สามารถโหลดข้อมูลพนักงานได้', 'error');
             }
         };
 
@@ -847,8 +1134,9 @@
                 await deleteEmployee(currentDeleteId);
                 closeDeleteModal();
                 await fetchEmployees();
+                showToast('ลบพนักงานเรียบร้อยแล้ว ✅', 'success');
             } catch (error) {
-                alert('ไม่สามารถลบพนักงานได้');
+                showToast('ไม่สามารถลบพนักงานได้: ' + error.message, 'error');
             }
         });
 
@@ -867,17 +1155,28 @@
                 profileImage: profileImageInput.value.trim()
             };
 
+            // Validate
+            if (!employeeData.firstName || !employeeData.lastName || 
+                !employeeData.position || !employeeData.department || !employeeData.email) {
+                showToast('กรุณากรอกข้อมูลให้ครบถ้วน (ช่องที่มี *)', 'error');
+                return;
+            }
+
             const id = employeeIdInput.value;
+            const isEdit = !!id;
+            
             try {
-                if (id) {
+                if (isEdit) {
                     await updateEmployee(id, employeeData);
+                    showToast('อัพเดทข้อมูลพนักงานเรียบร้อยแล้ว ✅', 'success');
                 } else {
                     await addEmployee(employeeData);
+                    showToast('เพิ่มพนักงานใหม่เรียบร้อยแล้ว 🎉', 'success');
                 }
                 closeModalFn();
                 await fetchEmployees();
             } catch (error) {
-                alert('เกิดข้อผิดพลาด: ' + error.message);
+                showToast('เกิดข้อผิดพลาด: ' + error.message, 'error');
             }
         });
 
